@@ -1,0 +1,28 @@
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+
+public class ScriptStealingPet {
+    public static void stealScripts(String sourceFolder, String targetFolder) {
+        File source = new File(sourceFolder);
+        File target = new File(targetFolder);
+
+        if (!target.exists()) target.mkdirs();
+
+        File[] sqlFiles = source.listFiles((dir, name) -> name.endsWith(".sql"));
+        if (sqlFiles == null || sqlFiles.length == 0) {
+            System.out.println("😿 No scripts to steal. Garden is empty.");
+            return;
+        }
+
+        for (File script : sqlFiles) {
+            try {
+                Path targetPath = Paths.get(target.getPath(), script.getName());
+                Files.move(script.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("😼 Pet stole: " + script.getName());
+            } catch (IOException e) {
+                System.err.println("⚠️ Failed to steal " + script.getName());
+            }
+        }
+    }
+}
